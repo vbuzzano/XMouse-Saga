@@ -119,15 +119,11 @@ tools/
 .setup/state.json
 
 # Setup state and user config
-setup.config.psd1
-Makefile.env
 .env
-.env.custom
-setup-env.ps1
 
 # Temp files
 *.bak
 *.tmp
 
 
-.gith*
+.git*
