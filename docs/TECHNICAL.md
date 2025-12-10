@@ -322,6 +322,52 @@ sendDaemonMessage(existingPort, XMSG_CMD_SET_CONFIG, 0x23);  // Wheel ON, button
 - Non-blocking: messages processed between timer ticks
 - Response-based: caller waits for confirmation
 
+## Debug Mode
+
+### Enabling Debug Console
+
+Set **Bit 7 (0x80)** in config byte to enable debug mode. XMouse will open a CON: window and log all events.
+
+```bash
+xmouse 0x93         # Enable: Wheel ON + Buttons ON + 10ms + Debug ON
+xmouse 0x13         # Disable: Debug OFF (closes CON: window)
+```
+
+### Debug Output
+
+When enabled, the debug console displays:
+- Daemon startup messages
+- Wheel movement events (delta, direction, count)
+- Button press/release events
+- Config changes (interval updates, debug mode toggles)
+- Timer tick counter (logged every 1000 ticks)
+
+Example output:
+```
+daemon started
+Mode: IECLASS_RAWKEY/NEWMOUSE
+Poll interval: 10ms
+---
+Press Ctrl+C to quit
+Wheel: delta=5 dir=UP count=5
+Button 4 pressed
+Button 4 released
+Config updated: interval changed to 20ms
+Timer polls: 1000 (interval: 10ms)
+```
+
+### Implementation Details
+
+- Debug mode is compile-time controlled via `#ifndef RELEASE`
+- `DebugLog()` and `DebugLogF()` macros check `CONFIG_DEBUG_MODE` bit before output
+- Debug console opened in `daemon_Init()` when bit 7 is set
+- Console closed in `daemon_Cleanup()` or when debug disabled via message
+
+### Development Builds vs Release
+
+- **Development builds** (`make`): Debug macros enabled, small performance impact
+- **Release builds** (`make MODE=release`): Debug code compiled out, faster execution
+
 ## Future Enhancements
 
 
