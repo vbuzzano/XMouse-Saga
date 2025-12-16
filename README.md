@@ -1,4 +1,4 @@
-# XMouseD - eXtended Mouse Driver for Apollo 68080 SAGA Hardware
+# XMouseD
 
 Minimal, efficient mouse wheel and extra buttons driver for Vampire/Apollo 68080 SAGA chipset.
 
