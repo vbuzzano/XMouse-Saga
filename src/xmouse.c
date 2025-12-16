@@ -158,7 +158,7 @@ static const AdaptiveProfile s_adaptiveProfiles[] =
     // activeThreshold=500000us (500ms human grace period - same real time for all modes)
     // idleThreshold=500000us (500ms before TO_IDLE from BURST)
     // CPU: near 0% idle (dynamic) | ~0.2% constant (fixed)
-    { PROFILE_NAME_COMFORT, MODE_NAME_MODERATE, 150000, 60000, 20000, 1000, 2000, 500000, 500000 },
+    { PROFILE_NAME_COMFORT, MODE_NAME_MODERATE, 150000, 60000, 20000, 1100, 15000, 500000, 500000 },
     
     // BALANCED (01): Balanced, universal - DEFAULT
     // Dynamic: 100→30→10ms | Fixed: 10ms (ACTIVE)
@@ -167,7 +167,7 @@ static const AdaptiveProfile s_adaptiveProfiles[] =
     // activeThreshold=500000us (500ms human grace period - same real time for all modes)
     // idleThreshold=500000us (500ms before TO_IDLE from BURST)
     // CPU: 0.1-0.2% idle (dynamic) | ~0.1% constant (fixed)
-    { PROFILE_NAME_BALANCED, MODE_NAME_ACTIVE, 100000, 30000, 10000, 1000, 4000, 500000, 500000 },
+    { PROFILE_NAME_BALANCED, MODE_NAME_ACTIVE, 100000, 30000, 10000, 600, 1200, 500000, 1500000 },
     
     // REACTIVE (10): Nervous, snappy
     // Dynamic: 50→15→5ms | Fixed: 5ms (INTENSIVE)
@@ -176,7 +176,7 @@ static const AdaptiveProfile s_adaptiveProfiles[] =
     // activeThreshold=500000us (500ms human grace period - same real time for all modes)
     // idleThreshold=2000000us (2s before TO_IDLE from BURST)
     // CPU: 0.2% idle (dynamic) | ~0.24% constant (fixed)
-    { PROFILE_NAME_REACTIVE, MODE_NAME_INTENSIVE, 50000, 15000, 5000, 1500, 1000, 500000, 2000000 }
+    { PROFILE_NAME_REACTIVE, MODE_NAME_INTENSIVE, 50000, 15000, 5000, 500, 250, 500000, 3000000 }
 };
 
 // Adaptive state variables
