@@ -1,10 +1,11 @@
-@database XMouse@@$VER: XMouse.guide 1.0 (2025-12-10)
-@(c) 2025 - XMouse Contributors
+@database XMouse
+@$VER: XMouse.guide 1.0 (2025-12-10) Vincent Buzzano
+@(c) 2025 - XMouse, Vincent Buzzano
 
-@node MAIN "XMouse 1.0 - Lightweight SAGA Mouse Wheel Daemon"
+@node main "XMouse 1.0 - Lightweight SAGA Mouse Wheel Daemon"
 @toc CONTENTS
-@index INDEX
-@help MAIN
+@index index
+@help main
 
 XMouse - Wheel Power for Your Apollo 68080
 
@@ -17,7 +18,7 @@ Apollo accelerators with the SAGA chipset. Unlike traditional
 mouse drivers, XMouse runs as a simple daemon with near-zero CPU
 overhead (~0.5%) and requires no reboot to configure.
 
-Copyright 2025 - XMouse Contributors
+Copyright 2025 - XMouse, Vincent Buzzano
 Freely distributable for non-commercial purposes.
 
 Quick Navigation:
@@ -33,7 +34,7 @@ Quick Navigation:
 @endnode
 
 
-@node CONTENTS "Table of Contents"
+@node contents "Table of Contents"
 
 XMouse Documentation Contents
 
@@ -50,7 +51,7 @@ XMouse Documentation Contents
 @endnode
 
 
-@node INDEX "Index"
+@node index "Index"
 
 Quick Reference
 
@@ -67,8 +68,8 @@ Quick Reference
 
 
 @node Quick "Quick Start - Get Up and Running"
-@prev MAIN
-@next Install
+@prev main
+@next install
 
 The simplest way to enable wheel support:
 
@@ -103,9 +104,9 @@ See the Configuration section for all options.
 @endnode
 
 
-@node Install "Installation"
-@prev Quick
-@next Usage
+@node install "Installation"
+@prev quick
+@next usage
 
 Manual Installation
 
@@ -138,11 +139,11 @@ If you prefer to launch from Workbench:
 @endnode
 
 
-@node Usage "Usage & Commands"
-@prev Install
-@next Config
+@node usage "Usage & Commands"
+@prev install
+@next config
 
-Basic Commands
+Basic commands
 
 C:xmouse
   Toggles daemon on/off. If not running, starts it.
@@ -186,9 +187,9 @@ No CTRL+C needed, no service interruption.
 @endnode
 
 
-@node Config "Configuration - The Config Byte Explained"
-@prev Usage
-@next Build
+@node config "Configuration - The Config Byte Explained"
+@prev usage
+@next technical
 
 XMouse uses a single 8-bit configuration byte to control all
 behavior. This makes it simple, fast, and easy to hot-update.
@@ -253,63 +254,10 @@ Example: Wheel + Buttons + 20ms + no debug
 @endnode
 
 
-@node Build "Building from Source"
-@prev Config
-@next Technical
 
-XMouse is written in C using the VBCC compiler for m68k-amigaos.
-
-Requirements
-
-  * VBCC m68k-amigaos toolchain
-  * AmigaOS NDK39 (or compatible headers)
-  * GNU make
-  * PowerShell (for setup script on Windows)
-
-Quick Start
-
-On Windows (first time only):
-  .\setup.ps1
-
-This pulls the VBCC compiler and NDK if not already present.
-
-Then compile:
-  make
-
-Output executable: dist/xmouse
-
-Build Options
-
-Release build (optimized, no debug):
-  make MODE=release
-
-Clean build artifacts:
-  make clean
-
-Upload to Vampire (if configured):
-  make upload
-
-Compiler Flags
-
-  -O3 -speed -sc -schedule
-    Optimized for 68080 speed
-  -cpu=68080
-    Target 68080 in Apollo accelerators
-  -DRELEASE (release builds only)
-    Disables debug console code
-
-Source Files
-
-  * src/xmouse.c - Main daemon implementation (887 lines)
-  * include/newmouse.h - NewMouse standard constants
-  * Makefile - Build configuration
-
-@endnode
-
-
-@node Technical "Technical Details"
-@prev Build
-@next Troubleshooting
+@node technical "Technical Details"
+@prev config
+@next troubleshooting
 
 How XMouse Works
 
@@ -392,9 +340,9 @@ Compared to:
 @endnode
 
 
-@node Troubleshooting "Common Problems & Solutions"
-@prev Technical
-@next HISTORY
+@node troubleshooting "Common Problems & Solutions"
+@prev technical
+@next hISTORY
 
 Wheel doesn't scroll
 
@@ -475,78 +423,9 @@ That's it! No reboot needed.
 @endnode
 
 
-@node HISTORY "Version History"
-@prev Troubleshooting
-@next MAIN
-ic infrastructure is in place,
-  but detection and event injection may need refinement on some hardware.
-
-  Please report detailed findings to the XMouse maintainers.
-
-Need to uninstall
-
-Simply:
-  1. C:xmouse STOP to cleanly shut down the daemon
-
-  2. Delete C:xmouse executable
-
-  3. If it was in S:User-Startup, remove the line:
-     C:xmouse 0x13
-
-That's it! No reboot needed.
-
-@endnode
-
-
-@node HISTORY "Version History"
-@prev Troubleshooting
-@next MAIN
-ic infrastructure is in place,
-  but detection and event injection may need refinement on some hardware.
-
-  Please report detailed findings to the XMouse maintainers.
-
-Need to uninstall
-
-Simply:
-  1. C:xmouse STOP to cleanly shut down the daemon
-
-  2. Delete C:xmouse executable
-
-  3. If it was in S:User-Startup, remove the line:
-     C:xmouse 0x13
-
-That's it! No reboot needed.
-
-@endnode
-
-
-@node HISTORY "Version History"
-@prev Troubleshooting
-@next MAIN
-ic infrastructure is in p2025,
-  but detection and event injection may need refinement on some hardware.
-
-  Please report detailed findings to the XMouse maintainers.
-
-Need to uninstall
-
-Simply:
-  1. C:xmouse STOP to cleanly shut down the daemon
-
-  2. Delete C:xmouse executable
-
-  3. If it was in S:User-Startup, remove the line:
-     C:xmouse 0x13
-
-That's it! No reboot needed.
-
-@endnode
-
-
-@node HISTORY "Version History"
-@prev Troubleshooting
-@next MAIN
+@node history "Version History"
+@prev troubleshooting
+@next main
 
 Version 1.0 (December 2025)
 

@@ -10,8 +10,8 @@
     # Project Settings
     # ========================================================================
     Project = @{
-        Name        = "xmouse"
-        Description = "Driver for Saga Mouse Wheel and Extra Buttons"
+        Name        = "XMouseD"
+        Description = "Daemon Driver for Saga Mouse Wheel and Extra Buttons"
         Version     = "0.1.0"
     }
 
@@ -29,6 +29,8 @@
     Envs = @{
         # MY_VAR = "my_value"
         APOLLO_V4_HOST = "10.0.0.168:Ram Disk"
+        INSTALLPATH = "install"
+        GUIDEPATH = "readme.guide"
     }
 
     # ========================================================================
@@ -76,7 +78,7 @@
     # ========================================================================
     Build = @{
         # Program name for the executable (defaults to Project.Name)
-        ProgramName = "xmouse"
+        ProgramName = "xmoused"
         
         # Default CPU target (68000, 68020, 68040, 68080)
         DefaultCPU  = "68080"

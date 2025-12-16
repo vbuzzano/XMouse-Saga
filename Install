@@ -1,0 +1,145 @@
+; XMouse Installer Script
+; $VER: XMouse 1.0 (15.12.2025)
+
+(complete 0)
+(set @app-name "XMouse")
+(set @default-dest "C:")
+
+(complete 3)
+; Welcome message
+(welcome "Welcome to the XMouse installer. This installer will guide you through the required steps to install the daemon drivers.")
+
+(complete 6)
+; ========================================
+; Step 1: Select destination for executable
+; ========================================
+
+(set #dest-cmd
+  (askdir
+    (prompt "Where do you want to install the xmouse executable?\n(usually your C: command directory)")
+    (help @askdir-help)
+    (default "C:")
+  )
+)
+
+(complete 15)
+; ========================================
+; Step 2: Copy executable
+; ========================================
+
+(copyfiles
+  (prompt "Copying xmouse executable...")
+  (help @copyfiles-help)
+  (confirm "expert")
+  (source "XMouse")
+  (dest #dest-cmd)
+  (choices "XMouse")
+  (infos)
+)
+
+(complete 40)
+; ========================================
+; Step 3: Select destination for guide
+; ========================================
+
+(set #dest-help
+  (askdir
+    (prompt "Where should the XMouse.guide documentation be installed?\n(usually Help: or HELP:)")
+    (help @askdir-help)
+    (default "HELP:")
+  )
+)
+
+(complete 55)
+; ========================================
+; Step 4: Copy guide
+; ========================================
+
+(copyfiles
+  (prompt "Copying XMouse.guide documentation...")
+  (help @copyfiles-help)
+  (confirm "expert")
+  (source "XMouse.guide")
+  (dest #dest-help)
+  (choices "XMouse.guide")
+  (infos)
+)
+
+(complete 75)
+; ========================================
+; Step 5: Optional User-Startup configuration
+; ========================================
+
+(set #startup-add
+  (askchoice
+    (prompt "Add xmouse to your User-Startup script?\n\nThis will make XMouse start automatically every time your Amiga boots, with default configuration (wheel + buttons, 10ms polling).\n\nYou can edit User-Startup later to change the configuration.")
+    (help @askchoice-help)
+    (choices
+      "Yes - Add to User-Startup"
+      "No - I'll start it manually"
+    )
+    (default 0)
+  )
+)
+
+(complete 85)
+; If user wants to add to startup
+(if (= #startup-add 0)
+(
+
+(complete 88)
+; Ask which User-Startup file to modify
+(set #startup-file
+  (askchoice
+    (prompt "Which User-Startup should be modified?")
+    (help @askchoice-help)
+    (choices
+      "S:User-Startup (boot disk)"
+      "SYS:S/User-Startup (if different)"
+    )
+    (default 0)
+  )
+)
+
+; Set the path based on choice
+(if (= #startup-file 0)
+  (set #startup-path "S:User-Startup")
+  (set #startup-path "SYS:S/User-Startup")
+)
+
+(complete 92)
+; Check if User-Startup exists
+(set #startup-exists
+  (exists #startup-path (noreq))
+)
+
+; If yes, add the line
+(if (= #startup-exists 1)
+(
+
+(complete 95)
+; Add to User-Startup using startup command (safe append)
+(startup "XMouse"
+  (prompt "Adding XMouse to User-Startup...")
+  (help @startup-help)
+  (command "C:XMouse >NIL:\n")
+)
+
+)
+; else show warning
+(
+
+(message "Warning: Could not find " #startup-path "\n\nYou can manually add this line to your User-Startup script:\n\nC:XMouse >NIL:\n\nThis will make XMouse start at boot time.")
+
+)
+) ; End if startup-exists
+
+)
+) ; End if startup-add
+
+; ========================================
+; Installation complete
+; ========================================
+(complete 100)
+; youpi ^^
+(exit "Installation Complete!\nXMouse has been successfully installed.")

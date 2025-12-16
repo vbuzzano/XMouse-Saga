@@ -1,0 +1,240 @@
+Short: Lightweight SAGA mouse wheel daemon for Apollo 68080
+Author: reddoc
+Uploader: reddoc
+Type: Utility/Input
+Version: 1.0
+Architecture: m68k-amigaos
+URL: https://github.com/reddoc/saga-xmouse
+
+======================================================================
+
+XMOUSE 1.0
+Lightweight SAGA Mouse Wheel Daemon for Apollo 68080
+
+======================================================================
+
+DESCRIPTION:
+
+XMouse is an ultra-lightweight mouse wheel driver for Vampire and
+Apollo accelerators equipped with the SAGA chipset. Unlike traditional
+mouse drivers, XMouse runs as a simple resident daemon with minimal
+CPU overhead (~0.5% at default settings).
+
+Key features:
+  • Mouse wheel scrolling support for any application
+  • Configurable polling rates (5/10/20/40ms)
+  • Hot configuration (no restart needed)
+  • Message port IPC for daemon communication
+  • Debug console for development
+  • Just 7.4 KB executable size
+  • Clean exit with CTRL+C or C:xmouse STOP
+
+REQUIREMENTS:
+
+  • Apollo accelerator with SAGA chipset:
+    - Apollo Firebird V4
+    - Apollo Icedrake
+    - Apollo Manticore
+    - Apollo Salamander
+    - Apollo Phoenix
+    - A6000 Unicorn
+  
+  • AmigaOS 3.x (3.1 or higher recommended)
+  • Standard Amiga mouse with wheel support
+  • NewMouse driver (for wheel event generation)
+
+INSTALLATION:
+
+1. Extract the archive to a temporary directory
+2. Run the included "Install" script from Workbench or Shell:
+   Installer Install
+3. Follow the installer prompts to:
+   - Choose destination for executable (usually C:)
+   - Choose destination for documentation (usually HELP:)
+   - Optionally add to User-Startup for automatic startup
+
+Or manually:
+1. Copy xmouse to C:
+2. Copy XMouse.guide to HELP:
+3. (Optional) Add "C:xmouse >NIL:" to S:User-Startup
+
+USAGE:
+
+  C:xmouse
+    Start daemon or toggle if already running
+
+  C:xmouse START
+    Start the daemon
+
+  C:xmouse STOP
+    Stop the daemon cleanly
+
+  C:xmouse 0x13
+    Configure with hex byte (0x13 = recommended default)
+    Can be used to update running daemon without restart
+
+CONFIGURATION:
+
+XMouse uses an 8-bit configuration byte to control all behavior:
+
+  Bit 0 (0x01) = Wheel Enable
+    1 = Wheel scrolling active (default)
+    0 = Wheel disabled
+
+  Bit 1 (0x02) = Extra Buttons (4th & 5th)
+    1 = Buttons 4 & 5 enabled (default)
+    0 = Buttons 4 & 5 disabled
+
+  Bits 4-5 (0x20, 0x40) = Poll Interval
+    00 = 5ms   (very responsive, ~1% CPU)
+    01 = 10ms  (balanced, ~0.5% CPU) ← default
+    10 = 20ms  (smooth, ~0.25% CPU)
+    11 = 40ms  (relaxed, ~0.1% CPU)
+
+  Bit 7 (0x80) = Debug Mode
+    1 = Debug console (dev builds only)
+    0 = Silent operation (default)
+
+Common configurations:
+
+  0x13 = Wheel ON + Buttons ON + 10ms polling (recommended)
+  0x03 = Wheel OFF + Buttons ON + 10ms polling
+  0x31 = Wheel ON + Buttons ON + 5ms polling (snappier)
+  0x51 = Wheel ON + Buttons ON + 20ms polling (smoother)
+  0x91 = Wheel ON + Buttons ON + 40ms polling (very smooth)
+
+See XMouse.guide for complete configuration reference.
+
+FEATURES:
+
+  ✓ Minimal footprint (7.4 KB)
+  ✓ Efficient polling (0.5% CPU at default)
+  ✓ Hot configuration (no restart required)
+  ✓ Message port IPC system
+  ✓ Works on RTG and native screens
+  ✓ Clean daemon lifecycle
+  ✓ Compatible with standard NewMouse events
+  ✓ Dual event injection (RAWKEY + NEWMOUSE)
+
+ARCHITECTURE:
+
+XMouse monitors the SAGA chipset's wheel counter register and injects
+scroll events at configurable intervals (default 10ms). Unlike interrupt-
+driven approaches, polling provides better compatibility and cleaner
+resource management.
+
+The daemon uses a public message port for IPC, allowing configuration
+changes without restarting or requiring privileged access.
+
+TECHNICAL:
+
+  • Written in C using VBCC m68k-amigaos compiler
+  • Optimized for 68080 with -O3 -speed -sc -schedule
+  • Polling via UNIT_VBLANK timer device
+  • Message port: "XMouse_Port"
+  • SAGA hardware registers: 0xDFF212 (buttons), 0xDFF213 (wheel)
+  • NewMouse events: IECLASS_RAWKEY + IECLASS_NEWMOUSE
+
+See TECHNICAL.md in the archive for detailed architectural information.
+
+DIFFERENCES FROM OTHER SOLUTIONS:
+
+  vs OptMouse (3.5 KB):
+    OptMouse is a classic serial mouse driver with load-stay-resident
+    pattern. XMouse adds modern daemon management, hot configuration,
+    and message port IPC.
+
+  vs FreeWheel (38 KB):
+    FreeWheel is a full Commodity with GUI preferences window.
+    XMouse is lightweight daemon-only, focusing on wheel scrolling
+    without extra features. FreeWheel is useful if you want advanced
+    button remapping; XMouse is ideal if you just want the wheel to work.
+
+  vs ApolloWheel (15 KB):
+    Similar lightweight daemon approach. XMouse emphasizes ultra-minimal
+    footprint and efficient polling.
+
+TROUBLESHOOTING:
+
+Wheel doesn't scroll?
+  • Verify XMouse is running: C:xmouse (should report "already running")
+  • Check active window supports scrolling (try Workbench)
+  • Ensure wheel is enabled: C:xmouse 0x13
+  • Review XMouse.guide for full troubleshooting section
+
+Daemon won't start?
+  • Verify you have SAGA-equipped hardware
+  • Check you're on AmigaOS 3.x with standard libraries
+  • Try from Shell window to see error messages
+
+High CPU usage?
+  • Reduce polling rate: C:xmouse 0x51 (20ms) or 0x91 (40ms)
+  • Verify hardware compatibility
+
+BUILDING FROM SOURCE:
+
+Requirements:
+  • VBCC m68k-amigaos toolchain
+  • AmigaOS NDK39 headers
+  • GNU make
+  • PowerShell (Windows) or bash (Unix)
+
+Build:
+  ./setup.ps1        (first time, fetch VBCC + NDK)
+  make               (compile)
+  make MODE=release  (release build)
+  make clean         (clean build artifacts)
+
+See TECHNICAL.md for detailed build information.
+
+LICENSE:
+
+XMouse is freely distributable for non-commercial purposes.
+Source code is included and may be modified for personal use.
+
+HISTORY:
+
+Version 1.0 (December 2024):
+  • Initial release
+  • Wheel scrolling support
+  • Configurable polling rates
+  • Hot configuration via message port
+  • ~0.5% CPU overhead at default settings
+  • 7.4 KB executable
+
+CREDITS:
+
+XMouse builds upon decades of Amiga mouse driver tradition,
+referencing patterns from classic drivers like OptMouse and
+modern commodities like FreeWheel.
+
+Special thanks to the Amiga developer community and the SAGA
+chipset documentation provided by Apollo accelerator designers.
+
+AUTHOR:
+
+reddoc
+GitHub: https://github.com/reddoc/saga-xmouse
+
+======================================================================
+
+FILES IN ARCHIVE:
+
+  xmouse             - Executable daemon (ready to install)
+  Install            - Commodore Installer script
+  XMouse.guide       - Complete user documentation (AmigaGuide format)
+  README.md          - Quick reference
+  TECHNICAL.md       - Architecture and developer documentation
+  ROADMAP.md         - Future development plans
+  CHANGELOG.md       - Version history
+  src/xmouse.c       - Source code
+  include/newmouse.h - NewMouse standard constants
+  Makefile           - Build configuration
+  setup.ps1          - Setup script for Windows
+
+======================================================================
+
+For support, questions, or contributions, visit:
+https://github.com/reddoc/saga-xmouse
+
+Enjoy your wheel-enabled Amiga!
