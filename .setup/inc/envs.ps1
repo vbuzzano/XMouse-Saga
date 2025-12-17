@@ -16,17 +16,26 @@ function Generate-DotEnvFile {
     
     # Project settings from merged config
     if ($Config.Project) {
-        if ($Config.Project.Name) {
-            $lines += "PROGRAM_NAME=$($Config.Project.Name)"
+
+        
+        $lines += "PROGRAM_NAME=$($Config.Project.Name)"
+        $lines += "PROGRAM_AUTHOR=$($Config.Project.Author)"
+        $lines += "PROGRAM_VERSION=$($Config.Project.Version)"
+        $lines += "PROGRAM_DATE=$($Config.Project.VersionDate)"
+        $lines += "PROGRAM_DESCRIPTION=$($Config.Project.Description)"
+        $lines += "PROGRAM_DESC_SHORT=$($Config.Project.DescShort)"
+        
+        if ($Config.Build.EXE_NAME) {
+            $lines += "PROGRAM_EXE_NAME=$($Config.Build.EXE_NAME)"
+        } else {
+            $lines += "PROGRAM_EXE_NAME=$($Config.Project.Name)"
         }
-        if ($Config.Project.DefaultCPU) {
-            $lines += "DEFAULT_CPU=$($Config.Project.DefaultCPU)"
+
+        if ($Config.Build.DefaultCPU) {
+            $lines += "CPU=$($Config.Build.DefaultCPU)"
         }
-        if ($Config.Project.DefaultFPU) {
-            $lines += "DEFAULT_FPU=$($Config.Project.DefaultFPU)"
-        }
-        if ($Config.Project.Version) {
-            $lines += "VERSION=$($Config.Project.Version)"
+        if ($Config.Build.DefaultFPU) {
+            $lines += "FPU=$($Config.Build.DefaultFPU)"
         }
     }
     
