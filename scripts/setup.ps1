@@ -20,7 +20,7 @@
     .\setup.ps1 help               # Show help
     
 .NOTES
-    Author: Vincent Buzzano (ReddoC)
+    Author: Vincent Buzzano
     Date: December 2025
 #>
 
