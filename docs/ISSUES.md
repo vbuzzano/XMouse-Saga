@@ -8,52 +8,12 @@
 
 ## Table des Matières
 
-1. [Issues Critiques](#issues-critiques)
-2. [Issues Majeures](#issues-majeures)
-3. [Issues Mineures](#issues-mineures)
-4. [Risques Potentiels](#risques-potentiels)
-5. [Code Smell & Debt Technique](#code-smell--debt-technique)
+1. [Issues Majeures](#issues-majeures)
+2. [Issues Mineures](#issues-mineures)
+3. [Risques Potentiels](#risques-potentiels)
+4. [Code Smell & Debt Technique](#code-smell--debt-technique)
 
 ---
-
-## Issues Critiques
-
-### C2. Absence de timeout dans `sendDaemonMessage()`
-
-**Localisation:** `sendDaemonMessage()` ligne 318-356
-
-**Problème:**
-`WaitPort(replyPort)` bloque indéfiniment si le daemon crash ou ne répond pas.
-
-**Code problématique:**
-```c
-PutMsg(port, (struct Message *)msg);
-WaitPort(replyPort);  // ← Bloque FOREVER si daemon mort
-GetMsg(replyPort);
-```
-
-**Impact:**
-- **Launcher freeze** si daemon crash pendant traitement message
-- **Shell bloque** - utilisateur ne peut plus interagir
-- **Nécessite reboot** pour débloquer
-
-**Solution recommandée:**
-Utiliser timer.device avec `Wait()` sur multiple signaux:
-```c
-ULONG timeoutSig = ...; // Timer signal
-ULONG replySig = 1L << replyPort->mp_SigBit;
-ULONG sigs = Wait(timeoutSig | replySig | SIGBREAKF_CTRL_C);
-
-if (sigs & timeoutSig) {
-    // Timeout - daemon non-responsive
-    return 0xFFFFFFFF;
-}
-```
-
-**Priorité:** 🔴 CRITIQUE - Peut freezer le système
-
----
-
 ## Issues Majeures
 
 ### M1. Fixed mode fait `AbortIO/WaitIO` inutile
@@ -514,9 +474,6 @@ Soit faire le travail, soit créer issue GitHub, soit supprimer si non-prioritai
 ---
 
 ## Todo List - Plan de Correction
-
-### 🔴 Critiques (Avant Release - Bloquant)
-- [x] **C2** Ajouter timeout `sendDaemonMessage()` → freeze système (DONE: 2025-12-17)
 
 ### 🟠 Majeures (Avant Release)
 - [ ] **M1** Séparer fixed/dynamic timer restart → perf

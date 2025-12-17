@@ -446,8 +446,7 @@ action to ensure broad compatibility.
 
   @{b}XMSG_CMD_QUIT@{ub} (0)         - Stop daemon
   @{b}XMSG_CMD_SET_CONFIG@{ub} (1)   - Update config byte
-  @{b}XMSG_CMD_SET_INTERVAL@{ub} (2) - Set polling interval (μs)
-  @{b}XMSG_CMD_GET_STATUS@{ub} (3)   - Query current status
+  @{b}XMSG_CMD_GET_STATUS@{ub} (2)   - Query current status
 
 This allows external tools (future XMouseCtrl GUI) to control
 the daemon without restarting it.

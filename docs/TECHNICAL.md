@@ -176,8 +176,7 @@ else
 |---------|-------|----------|
 | `XMSG_CMD_QUIT` (0) | - | 0 |
 | `XMSG_CMD_SET_CONFIG` (1) | 0xBYTE | applied config |
-| `XMSG_CMD_SET_INTERVAL` (2) | microseconds | new interval |
-| `XMSG_CMD_GET_STATUS` (3) | - | (config << 16) \| ms |
+| `XMSG_CMD_GET_STATUS` (2) | - | (config << 16) \| ms |
 
 
 **Message Structure**

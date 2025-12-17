@@ -81,8 +81,7 @@ PROGRAM_DESC_SHORT" (c) "PROGRAM_AUTHOR
 // Message commands for daemon control
 #define XMSG_CMD_QUIT           0   // Stop daemon
 #define XMSG_CMD_SET_CONFIG     1   // Set config byte
-#define XMSG_CMD_SET_INTERVAL   2   // Set poll interval (microseconds)
-#define XMSG_CMD_GET_STATUS     3   // Get current status
+#define XMSG_CMD_GET_STATUS     2   // Get current status
 
 
 //===========================================================================
@@ -680,15 +679,6 @@ static void daemon(void)
                                 }
 #endif
                             }
-                            break;
-                            
-                        case XMSG_CMD_SET_INTERVAL:
-                            s_pollInterval = msg->value;
-                            msg->result = s_pollInterval;
-                            // Restart timer with new interval
-                            AbortIO((struct IORequest *)s_TimerReq);
-                            WaitIO((struct IORequest *)s_TimerReq);
-                            TIMER_START(s_pollInterval);
                             break;
                             
                         case XMSG_CMD_GET_STATUS:
