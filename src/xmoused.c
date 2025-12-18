@@ -114,7 +114,6 @@ PROGRAM_DESC_SHORT" (c) "PROGRAM_AUTHOR
 
 struct ExecBase *SysBase;              // Exec base (absolute 4)
 struct DosLibrary *DOSBase;            // DOS library base
-//void *InputBase;                     // Input library base (for PeekQualifier inline pragma)
 struct Device * InputBase;
 static struct MsgPort *s_PublicPort;   // Singleton port
 static struct MsgPort *s_InputPort;    // Input device port
