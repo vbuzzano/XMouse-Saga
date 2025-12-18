@@ -1,62 +1,108 @@
-# Next 
+# Next - Post v1.0 Release Tasks
 
-## Button 4 et 5 problème potentiel
+## ✅ Completed for v1.0
+- [x] Wheel scrolling (UP/DOWN)
+- [x] Extra buttons 4 & 5 support
+- [x] Adaptive polling system (8 modes)
+- [x] Hot config update (no restart)
+- [x] Debug mode toggle
+- [x] Message timeout fix (2s)
+- [x] Button-hold reactive fix
+- [x] Full documentation (README, .guide, .readme)
+- [x] Installer script
+- [x] CHANGELOG.md
 
-### Boutton press boutton release 
+---
 
-Est ce que cela est bien géré meme à une intervalle lente ?
+## 📋 TODO Before v1.0 Release
 
-### Mode Adaptive 
+### Critical - Documentation Placeholders
+- [ ] **Run `.\scripts\env-replace.ps1`** on all files before release
+  - [ ] README.md
+  - [ ] XMouseD.guide
+  - [ ] XMouseD.readme
+  - [ ] CHANGELOG.md
+  - [ ] Install
+  - [ ] docs/TECHNICAL.md
+  - [ ] docs/VISION.md
+  
+  Format: `~ VALUE [VAR_ENV_NAME]~` → actual values
 
-si le boutton est préssé, on va considéré les prochains tic comme inactive, alors que s'il est press le boutton, il faut que ce soit réactif quand il lache. et actuellement meme sans tester je peux affirmer que le state TO_IDLE va s'enclencher.
+### Critical - Version Consistency
+- [ ] **Verify all version strings match `1.0`**:
+  - [ ] src/xmoused.c: `PROGRAM_VERSION "1.0"`
+  - [ ] src/xmoused.c: `PROGRAM_DATE "2025-12-17"` (update to release date)
+  - [ ] CHANGELOG.md: move `[Unreleased]` to `[1.0.0]` with date
+  - [ ] All docs using placeholders (will be updated by env-replace)
 
+### Critical - Build & Test
+- [ ] **Clean build**: `make clean && make MODE=release`
+- [ ] **Size check**: executable should be ~6KB
+- [ ] **Test on real Vampire V4**: All modes, wheel, buttons 4/5
+- [ ] **Test hot config**: mode switching without restart
+- [ ] **Test Installer script**: Full install path
 
-## Idée v 1.1 Started in branch test_dynamic_scroll
-Utilisé bit restant pour  deux possibilités
+### Critical - Release Package
+- [ ] **Run `.\scripts\build-release.ps1`** to create LHA archive
+- [ ] **Verify archive structure**:
+  ```
+  XMouseD-1.0.lha
+    + XMouseD-1.0/
+       - Install
+       - Install.info
+       - XMouseD (executable, no .exe extension!)
+       - XMouseD.guide
+       - XMouseD.guide.info
+    - XMouseD-1.0.info
+    - XMouseD-1.0.readme
+    - XMouseD-1.0.readme.info
+  ```
+- [ ] **Test extraction and install from archive**
 
-### Dynamic Wheel bit 2 ou bit 3 (celui qui nous laisse le plus de possibilité)
+### Optional - Cleanup
+- [ ] **Archive or delete ROADMAP.md** (obsolete now)
+- [ ] **Move Next.md tasks to GitHub Issues** (for v1.1+ tracking)
 
-sur le meme concept de delta global entre début wheel et fin wheel et adapter un multiplilcateur dynamic. 
+---
 
-Exemple: je suis dans DirectoryOpus avec une longue liste de fichier ou dans un Editeur de fichier avec une long liste de lignes, pour décendre au bottom, je dois donner presque autant de coup de wheel que il y a d'elément, alors que si je scroll scroll scroll scroll, ca devrait dynamiquemeent s'accélérer pour arriver au bottom vite fait.
+## 🚀 Future Ideas (v1.1+)
 
-## Analyse
+### Dynamic Wheel Acceleration (Branch: `test_dynamic_scroll`)
+Use bit 2 or bit 3 for dynamic multiplier feature:
+- Detect scroll burst (fast consecutive wheel events)
+- Auto-increase multiplier (1x → 2x → 4x) during burst
+- Auto-decrease on slow scroll
+- Timeout reset after 300ms idle
 
-Faire une analyse complete des documentation technique (.md), github (.md), release (.guide, .readme),  du fichier Install. 
+**Use case**: Long file lists in DirectoryOpus/editors - scroll faster to reach bottom quickly
 
-Y a - t - il des choses a corrigé ?
+**Status**: Experimental branch created, needs refinement and testing
 
-## Release XMouseD.lha via .\scripts\build-release.ps1
+### Button Hold Issue Investigation
+When button 4/5 is held down:
+- Adaptive polling may consider it "inactive" after threshold
+- Transitions to TO_IDLE state
+- Release detection might be delayed
 
-Structure de l'archive finale :
+**Solution options**:
+- Keep polling active while any button pressed
+- Add button state to activity detection
+- Test real-world impact first
 
-```
-XMouseD.lha
-  + XMouseD-<version>
-     - "Install XMouseD"
-     - "Install XMouseD.info"
-     - XMouseD
-     - XMouseD.guide
-     - XMouseD.guide.info
-  - XMouseD-<version>.info
-  - XMouseD-<version>.readme
-  - XMouseD-<version>.readme.info
-```
+---
 
-## Documentation - Actions restantes
+## 📝 Release Checklist Summary
 
-### Placeholders à remplacer
-Exécuter `.\scripts\env-replace.ps1` sur tous les fichiers de documentation avant release :
-- README.md
-- XMouseD.guide
-- XMouseD.readme
-- CHANGELOG.md
-- Install
-
-Format : `~ VALUE [VAR_ENV_NAME]~` sera remplacé par la valeur de l'environnement.
-
-### ROADMAP.md
-Supprimer ou archiver - obsolète maintenant que v1.0 est sortie.
+1. ✅ Code complete and tested
+2. ⚠️ **Run env-replace.ps1** on all docs
+3. ⚠️ **Update PROGRAM_DATE** to release date
+4. ⚠️ **Move CHANGELOG [Unreleased] → [1.0.0]**
+5. ⚠️ **Clean build MODE=release**
+6. ⚠️ **Test on real hardware**
+7. ⚠️ **Run build-release.ps1**
+8. ⚠️ **Verify LHA structure**
+9. ✅ Git tag `v1.0.0`
+10. ✅ GitHub release with LHA attachment
 
 
 
