@@ -1,13 +1,13 @@
-@database "~ XMouseD.guide [PROGRAM_NAME]~"
+@database ~ XMouseD [PROGRAM_EXE_NAME]~.guide
 @author "~ Vincent Buzzano [PROGRAM_AUTHOR]~"
-@$VER: ~ XMouseD 1.0 (17.12.2025) [PROGRAM_VERSION]~
+@$VER: ~ 1.0 [PROGRAM_VERSION]~
 @smartwrap
 
-@node main "~ XMouseD - SAGA Extended Mouse Driver [PROGRAM_NAME]~"
+@node main "~ XMouseD [PROGRAM_NAME]~"
 @next basicusage
 
-                    @{fg shine}@{b}~ XMouseD v1.0 [PROGRAM_NAME]~@{ub}@{fg text}
-           @{b}~ Extended Mouse Driver for SAGA Chipset [PROGRAM_DESC_SHORT]~@{ub}
+                    @{fg shine}@{b}~ XMouseD [PROGRAM_NAME]~ ~ 1.0 [PROGRAM_VERSION]~@{ub}@{fg text}
+           @{b}~ SAGA eXtended Mouse Driver [PROGRAM_DESC_SHORT]~@{ub}
 
 @{fg highlight}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━@{fg text}
 
@@ -351,7 +351,7 @@ Adaptive modes automatically reduce CPU usage when idle.
 
 1. @{b}Background Daemon@{ub}
    ~ XMouseD [PROGRAM_NAME]~ runs as a detached background process with public port
-   "~ XMouseD_Port [PROGRAM_NAME]~" for external control.
+   "~ XMouseD [PROGRAM_NAME]~" for external control.
 
 2. @{b}Hardware Polling@{ub}
    Timer-based polling (UNIT_VBLANK timer device):
@@ -420,7 +420,7 @@ action to ensure broad compatibility.
 
 @{b}Public Port Protocol@{ub}
 
-~ XMouseD [PROGRAM_NAME]~ listens on port "~ XMouseD_Port [PROGRAM_NAME]~" for control messages:
+~ XMouseD [PROGRAM_NAME]~ listens on port "~ XMouseD [PROGRAM_NAME]~" for control messages:
 
   @{b}XMSG_CMD_QUIT@{ub} (0)         - Stop daemon
   @{b}XMSG_CMD_SET_CONFIG@{ub} (1)   - Update config byte
