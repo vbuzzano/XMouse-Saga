@@ -707,7 +707,8 @@ static void daemon(void)
 
                 BYTE currentCounter = SAGA_WHEELCOUNTER;
                 UWORD currentButtons = SAGA_MOUSE_BUTTONS & (SAGA_BUTTON4_MASK | SAGA_BUTTON5_MASK);
-                BOOL hadActivity = (currentCounter != s_lastCounter) || (currentButtons != s_lastButtons);
+                BOOL buttonPressed = (currentButtons != 0);  // At least one button held
+                BOOL hadActivity = (currentCounter != s_lastCounter) || (currentButtons != s_lastButtons) || buttonPressed;
                 
                 if (hadActivity) 
                 {
@@ -821,7 +822,7 @@ static inline void daemon_ProcessWheel(BYTE current)
     
         // Update last counter
         s_lastCounter = current;
-    
+        
         if (delta != 0)
         {
             // Determine direction and repeat count
@@ -932,9 +933,10 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                 // Jump to ACTIVE
                 s_adaptiveState = POLL_STATE_ACTIVE;
                 s_adaptiveInterval = mode->activeUs;
-
+#ifdef DEBUG_ADAPTIVE
                 DebugLogF("[IDLE->ACTIVE] %ldus | InactiveUs=%ld", 
                           (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
+#endif
             }
             break;
             
@@ -952,8 +954,10 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                 {
                     s_adaptiveState = POLL_STATE_BURST;
                     s_adaptiveInterval = mode->burstUs;
+#ifdef DEBUG_ADAPTIVE
                     DebugLogF("[ACTIVE->BURST] %ldus | InactiveUs=%ld", 
                               (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
+#endif
                 }
             }
             else
@@ -962,8 +966,10 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                 if (s_adaptiveInactive >= mode->activeThreshold)
                 {
                     s_adaptiveState = POLL_STATE_TO_IDLE;
+#ifdef DEBUG_ADAPTIVE
                     DebugLogF("[ACTIVE->TO_IDLE] %ldus | InactiveUs=%ld", 
                               (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
+#endif
                 }
             }
             break;
@@ -976,8 +982,10 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                 {
                     // Transition to TO_IDLE
                     s_adaptiveState = POLL_STATE_TO_IDLE;
+#ifdef DEBUG_ADAPTIVE
                     DebugLogF("[BURST->TO_IDLE] %ldus | InactiveUs=%ld", 
                               (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
+#endif
                 }
             }
             break;
@@ -991,8 +999,10 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                     s_adaptiveInterval = mode->activeUs;
                 }
                 s_adaptiveState = POLL_STATE_ACTIVE;
+#ifdef DEBUG_ADAPTIVE
                 DebugLogF("[TO_IDLE->ACTIVE] %ldus | InactiveUs=%ld", 
                           (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
+#endif
             }
             else
             {
@@ -1013,8 +1023,10 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                 {
                     s_adaptiveState = POLL_STATE_IDLE;
                     s_adaptiveInterval = mode->idleUs;
+#ifdef DEBUG_ADAPTIVE
                     DebugLogF("[TO_IDLE->IDLE] %ldus | InactiveUs=%ld", 
                               (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
+#endif
                 }
             }
             break;
@@ -1022,6 +1034,7 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
     
 
 #ifndef RELEASE
+#ifdef DEBUG_ADAPTIVE
     // Log state changes (even without interval change)
     if (s_configByte & CONFIG_DEBUG_MODE)
     {
@@ -1041,6 +1054,7 @@ static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
                       stateNames[s_adaptiveState], (LONG)s_adaptiveInterval, (LONG)s_adaptiveInactive);
         }
     }
+#endif
 #endif
 
     return s_adaptiveInterval;
