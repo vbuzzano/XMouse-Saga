@@ -205,24 +205,17 @@ static inline BYTE parseArguments(void);
 static inline const char* getModeName(UBYTE configByte);
 
 static void daemon(void);
+static inline void daemon_TimerStart(ULONG micros);
+static inline void daemon_ProcessWheel(void);
+static inline void daemon_ProcessButtons(void);
+static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity);
 static BOOL daemon_Init(void);
 static void daemon_Cleanup(void);
-static inline void daemon_processWheel(void);
-static inline void daemon_processButtons(void);
-static inline ULONG getAdaptiveInterval(BOOL hadActivity);
 
 
 //===========================================================================
 // Macros
 //===========================================================================
-
-// Starts the timer with the specified timeout in milliseconds.
-// millis Timeout in milliseconds.
-#define TIMER_START(micros) \
-        s_TimerReq->tr_node.io_Command = TR_ADDREQUEST;  \
-        s_TimerReq->tr_time.tv_secs = micros / 1000000;  \
-        s_TimerReq->tr_time.tv_micro = micros % 1000000; \
-        SendIO((struct IORequest *)s_TimerReq);
 
 // Simple print macros
 #define Print(text) Printf(text "\n")
@@ -335,9 +328,7 @@ LONG _start(void)
     {
         // Send QUIT message to daemon
         sendDaemonMessage(existingPort, XMSG_CMD_QUIT, 0);
-        Printf("stopping daemon...");
-        // TODO: attendre réponse ?
-        Print(" done.");
+        Print("stopping daemon... done.");
         goto cleanup;
     }
 
@@ -359,7 +350,6 @@ LONG _start(void)
             cli->cli_Module = 0;
         }
 
-        // TODO: could wait for confirmation of startup via message port ?
         Print(" done.");
         goto cleanup;
     }
@@ -598,7 +588,7 @@ static void daemon(void)
             DebugLog("---");
         }
 #endif        
-        TIMER_START(s_pollInterval);
+        daemon_TimerStart(s_pollInterval);
         
         timerSig = 1L << s_TimerPort->mp_SigBit;
         portSig = 1L << s_PublicPort->mp_SigBit;
@@ -663,7 +653,7 @@ static void daemon(void)
                                     // Restart timer with new interval
                                     AbortIO((struct IORequest *)s_TimerReq);
                                     WaitIO((struct IORequest *)s_TimerReq);
-                                    TIMER_START(s_pollInterval);
+                                    daemon_TimerStart(s_pollInterval);
                                 }
                                 
 #ifndef RELEASE
@@ -729,7 +719,7 @@ static void daemon(void)
                     if (current != s_lastCounter)
                     {
                         hadActivity = TRUE;
-                        daemon_processWheel();
+                        daemon_ProcessWheel();
                     }
                 }
 
@@ -740,7 +730,7 @@ static void daemon(void)
                     if (current != s_lastButtons)
                     {
                         hadActivity = TRUE;
-                        daemon_processButtons();
+                        daemon_ProcessButtons();
                     }
                 }
 
@@ -748,14 +738,14 @@ static void daemon(void)
                 if (s_configByte & CONFIG_FIXED_MODE)
                 {
                     // Fixed mode: constant interval, direct restart
-                    TIMER_START(s_pollInterval);
+                    daemon_TimerStart(s_pollInterval);
                 }
                 else
                 {
                     // Adaptive mode: update interval and restart
                     // No need for AbortIO/WaitIO here - timer already completed (we got the signal)
-                    s_pollInterval = getAdaptiveInterval(hadActivity);
-                    TIMER_START(s_pollInterval);
+                    s_pollInterval = daemon_GetAdaptiveInterval(hadActivity);
+                    daemon_TimerStart(s_pollInterval);
                 }
                 
 #ifndef RELEASE
@@ -775,6 +765,18 @@ static void daemon(void)
     }
 
     daemon_Cleanup();
+}
+
+/**
+ * Start the timer with the specified timeout in microseconds.
+ * @param micros Timeout in microseconds.
+ */
+static inline void daemon_TimerStart(ULONG micros)
+{
+    s_TimerReq->tr_node.io_Command = TR_ADDREQUEST;
+    s_TimerReq->tr_time.tv_secs = micros / 1000000;
+    s_TimerReq->tr_time.tv_micro = micros % 1000000;
+    SendIO((struct IORequest *)s_TimerReq);
 }
 
 /**
@@ -798,7 +800,7 @@ static inline void injectEvent(struct InputEvent *ev)
  * Process wheel movement and inject events if needed.
  * Reuses s_eventBuf (only ie_Code and ie_Class are modified).
  */
-static inline void daemon_processWheel(void)
+static inline void daemon_ProcessWheel(void)
 {
     BYTE current;
     int delta, count, i;
@@ -837,13 +839,14 @@ static inline void daemon_processWheel(void)
             // Reuse s_eventBuf (only ie_Code and ie_Class change)
             s_eventBuf.ie_Code = code;
             
-            // Repeat events based on delta magnitude
+            // Repeat events based on delta
             for (i = 0; i < count; i++)
             {
-                // Always send both RawKey and NewMouse events
+                // Inject both RAWKEY - Modern apps
                 s_eventBuf.ie_Class = IECLASS_RAWKEY;
                 injectEvent(&s_eventBuf);
                 
+                // and NEWMOUSE - Legacy apps
                 s_eventBuf.ie_Class = IECLASS_NEWMOUSE;
                 injectEvent(&s_eventBuf);
             }
@@ -855,7 +858,7 @@ static inline void daemon_processWheel(void)
  * Process buttons and inject events if needed.
  * Reuses s_eventBuf (only ie_Code and ie_Class are modified).
  */
-static inline void daemon_processButtons(void)
+static inline void daemon_ProcessButtons(void)
 {
     UWORD current, changed;
     UWORD code;
@@ -905,7 +908,7 @@ static inline void daemon_processButtons(void)
  * Only called in adaptive mode (bit 6 = 0). Normal mode bypasses this function.
  * @param hadActivity TRUE if wheel/button activity detected this tick
  */
-static inline ULONG getAdaptiveInterval(BOOL hadActivity)
+static inline ULONG daemon_GetAdaptiveInterval(BOOL hadActivity)
 {
     const AdaptiveMode *mode = s_activeMode;
     ULONG oldUs = s_adaptiveInterval;
@@ -1167,7 +1170,7 @@ static inline void daemon_Cleanup(void)
     }
 #endif
 
-    // cleanup timer
+    // Cleanup timer: abort pending request, close device, delete resources
     if (s_TimerReq)
     {
         if (s_TimerReq->tr_node.io_Device)
