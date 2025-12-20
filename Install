@@ -103,4 +103,7 @@
 ; ========================================
 (complete 100)
 ; youpi ^^
-(exit "Installation Complete!\n~ XMouseD [PROGRAM_NAME]~, ~ SAGA eXtended Mouse Driver [PROGRAM_DESC_SHORT]~ has been successfully installed.")
+(if (= #startup-add 0)
+  (exit "Installation Complete!\n~ XMouseD [PROGRAM_NAME]~ has been installed.\n\nReboot your Amiga for the daemon to start automatically")
+  (exit "Installation Complete!\n~ XMouseD [PROGRAM_NAME]~ has been installed.\n\nTo start the daemon now, run:\n  C:~ XMouseD [PROGRAM_EXE_NAME]~")
+)
