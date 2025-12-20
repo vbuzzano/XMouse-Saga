@@ -45,6 +45,13 @@ if ((Test-Path $env:DIST_DIR)) {
 }
 New-Item -ItemType Directory -Path "$env:DIST_DIR\$ReleaseDir" -ErrorAction Stop
 
+# UPDATE FILES
+. $EnvReplace -Force -Path "$env:PROGRAM_EXE_NAME.readme"
+. $EnvReplace -Force -Path "$env:PROGRAM_EXE_NAME.guide"
+. $EnvReplace -Force -Path "Install"
+. $EnvReplace -Force -Path "docs\*.md"
+. $EnvReplace -Force -Path "*.md"
+
 # SOURCE
 . $EnvReplace  -Recurse -Force -Path ".\src"
 

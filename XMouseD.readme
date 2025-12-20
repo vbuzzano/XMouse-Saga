@@ -1,5 +1,5 @@
 
-                                 ~ XMouseD [PROGRAM_NAME]~ v~ 1.0 [PROGRAM_VERSION]~
+                                 ~ XMouseD [PROGRAM_NAME]~ v~ 1.0-rc1 [PROGRAM_VERSION]~
 
 -----------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ automatically.
 VERSION HISTORY
 
 
-~ 1.0 [PROGRAM_VERSION]~ (~ 2025-12-18 [PROGRAM_DATE]~)
+~ 1.0-rc1 [PROGRAM_VERSION]~ (~ 20.12.2025 [PROGRAM_DATE]~)
 
 Initial release with full feature set:
   - Mouse wheel scrolling for all applications

@@ -1,6 +1,6 @@
 # []($PROGRAM_NAME)XMouseD[]()
 
-- **Current Version**: v[]($PROGRAM_VERSION)1.0[]()-RC1
+- **Current Version**: v[]($PROGRAM_VERSION)1.0-rc1[]()-RC1
 - **Status**: Feature-complete, ready for testing
 - **CPU Optimization**: 68080 SAGA chipset with instruction scheduling
 
